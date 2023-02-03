@@ -1,0 +1,28 @@
+{
+  "name": "ecomm-backend-c13",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sar-kat-hop/ecomm-backend-c13.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sar-kat-hop/ecomm-backend-c13/issues"
+  },
+  "homepage": "https://github.com/sar-kat-hop/ecomm-backend-c13#readme",
+  "dependencies": {
+    "dotenv": "8.2",
+    "express": "4.17",
+    "mysql2": "^3.1.0",
+    "sequelize": "^6.28.0"
+  },
+  "devDependencies": {}
+}
