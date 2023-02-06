@@ -9,7 +9,7 @@ Product.belongsTo(Category, {
     foreignKey: 'id',
 });
 
-//do products have only one category???
+// Should a product only have one category?
 // Product.hasOne(Category, {
 //     foreignKey: 'id',
 //     onDelete: 'CASCADE',
