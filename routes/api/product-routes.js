@@ -26,18 +26,14 @@ router.get('/', async (req, res) => {
 // be sure to include its associated Category and Tag data
 router.get('/:id', async (req, res) => {
   try {
-    const singleProduct = await Product.findByPk(req.params.id, {
-      returning: true,
-      include: [{ model: Category, ProductTag }],
-      // attributes: { exclude: ['category_id'] }
-    });
+    const productId = await Product.findByPk(req.params.id, { include: Category, Tag });
 
-    if(!singleProduct) {
+    if(!productId) {
       res.status(400).json({ message: 'No product found with that id'});
     }
 
-    res.status(200).json(singleProduct);
-    console.log('Fetched single product: ' + singleProduct);
+    res.status(200).json(productId);
+    console.log('Fetched single product: ' + productId.product_name);
 
   } catch (err) {
     res.status(500).json('Error getting single product by id: ', err);
@@ -54,14 +50,15 @@ router.post('/', async (req, res) => {
       tagIds: [1, 2, 3, 4]
     }  */  
     try {
-      const { product_name, price, stock, tagIds } = req.body;
+      const { product_name, price, stock } = req.body;
       const newProduct = await Product.create(req.body, { 
         returning: true,
-        where: { tag_id: tagIds }
       });
-      await newProduct.addTags(req.body.tagIds);
+      // await newProduct.addTags(req.body.tagIds);
       
       res.status(200).json(newProduct);
+      console.log('Created new product: ', newProduct.product_name);
+      
     } catch (err) {
       res.status(400).json({ message: 'Could not create new product' });
     }

@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
     });
 
       res.status(200).json(newCategory);
-      console.log('Created new category: ' + newCategory);
+      console.log('Created new category: ' + newCategory.category_name);
       
     } catch (err) {
         res.status(400).json(err);
@@ -95,18 +95,14 @@ router.delete('/:id', async (req, res) => {
       res.status(500).json({ message: 'Category not found.'});
     }
 
-    const deletedCategory = await Category.destroy({
+    await Category.destroy({
       where: { id: categoryId },
       include: Product,
       returning: true
-    })
+    });
 
-    // if(!categoryData) {
-    //   res.status(404).json({ message: 'Category id not found'});
-    // }
-
-    res.status(200).json(deletedCategory);
-    console.log('Deleted category: ' + deletedCategory);
+    res.status(200).json();
+    console.log('Deleted category');
 
   } catch (err) {
       res.status(500).json(err);
