@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 
   } catch (err) {
       res.status(500).json(err);
-      console.log(err);
+      console.log('Error getting categories: ', err);
   }
 });
 
@@ -36,7 +36,7 @@ router.get('/:id', (req, res) => {
 
   } catch (err) {
       res.status(500).json(err);
-      console.log(err);
+      console.log('Error geting category by id: ', err);
   }
 });
 
@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
       
     } catch (err) {
         res.status(400).json(err);
-        console.log(err);
+        console.log('Error posting new category: ', err);
     }
 });
 
@@ -68,25 +68,9 @@ router.put('/:id', (req, res) => {
 
   } catch (err) {
       res.status(400).json(err);
-      console.log(err);
+      console.log('Error updating category by id: ', err);
   };
 });
-
-// {
-//   Category.update(req.body, {
-//       where: {
-//         id: req.params.id,
-//         // category_name: req.body.category_name,
-//       },
-//     })
-//       .then((updatedCategory) => {
-//         res.json(updatedCategory);
-//     })
-//       .catch((err) => {
-//         console.log(err);
-//         res.json(err);
-//     });
-// });
 
 router.delete('/:id', async (req, res) => {
   // delete a category by its `id` value
@@ -106,7 +90,7 @@ router.delete('/:id', async (req, res) => {
 
   } catch (err) {
       res.status(500).json(err);
-      console.log(err);
+      console.log('Error deleting category: ', err);
   }
 });
 
