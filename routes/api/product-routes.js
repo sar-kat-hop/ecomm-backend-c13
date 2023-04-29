@@ -5,7 +5,7 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 // be sure to include its associated Category and Tag data
-router.get('/products', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const allProducts = await Product.findAll({
       returning: true,
@@ -24,12 +24,12 @@ router.get('/products', async (req, res) => {
 
 // find a single product by its `id`
 // be sure to include its associated Category and Tag data
-router.get('/products/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const singleProduct = await Product.findOne(req.params.id, {
+    const singleProduct = await Product.findByPk(req.params.id, {
       returning: true,
       include: [{ model: Category, ProductTag }],
-      attributes: { exclude: ['category_id'] }
+      // attributes: { exclude: ['category_id'] }
     });
 
     if(!singleProduct) {
@@ -45,7 +45,7 @@ router.get('/products/:id', async (req, res) => {
 });
 
 // create new product
-router.post('/products', async (req, res) => {
+router.post('/', async (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -92,7 +92,7 @@ router.post('/products', async (req, res) => {
 // });
 
 // update product
-router.put('/products/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const productId = req.params.id; //initialize for use throughout code block
     const { product_name, price, stock, category_id } = req.body;
@@ -197,7 +197,7 @@ router.put('/products/:id', async (req, res) => {
 //     });
 // });
 
-router.delete('/products/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
   try {
     const productData = await Product.destroy({

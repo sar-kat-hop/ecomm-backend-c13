@@ -12,22 +12,21 @@ ProductTag.init(
             primaryKey: true,
             allowNull: false,
             autoIncrement: true,
-            validate: {
-                isInt: true
-            }
         },
         product_id: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'Product',
-                key: 'id'
+                key: 'id',
+                onDelete: 'CASCADE'
             }
         },
         tag_id: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'Tag',
-                key: 'id'
+                key: 'id',
+                onDelete: 'CASCADE'
             }
         },
     },

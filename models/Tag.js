@@ -12,12 +12,10 @@ Tag.init(
             primaryKey: true,
             allowNull: false,
             autoIncrement: true,
-            validate: {
-                isInt: true
-            }
         },
         tag_name: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            unique: true
         },
     },
     {

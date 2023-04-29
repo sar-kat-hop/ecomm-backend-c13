@@ -6,7 +6,7 @@ const { update } = require('../../models/Product');
 
 // find all tags
 // be sure to include its associated Product data
-router.get('/tags', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const tagData = await Tag.findAll({
       include: [{ model: Product }],
@@ -24,7 +24,7 @@ router.get('/tags', async (req, res) => {
 
 // find a single tag by its `id`
 // be sure to include its associated Product data
-router.get('/tags/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   try {
     const tagData = Tag.findByPk(req.params.id, {
       include: [{ model: Product }],
@@ -46,7 +46,7 @@ router.get('/tags/:id', (req, res) => {
 });
 
 // create a new tag
-router.post('/tags', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newTag = await Tag.create(req.body, {
     });
@@ -61,7 +61,7 @@ router.post('/tags', async (req, res) => {
 });
 
 // update a tag's name by its `id` value
-router.put('/tags/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const [ rowsAffected, updatedTag ] = await Tag.update(req.body, {//note to self: sequelize update method returns array with 2 items: # of affected rows and array of updated instances, so we need to destructure here
         where: { id: req.params.id } },
@@ -77,7 +77,7 @@ router.put('/tags/:id', async (req, res) => {
 });
 
 // delete on tag by its `id` value
-router.delete('/tags/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const tagData = await Tag.destroy({
       where: {
