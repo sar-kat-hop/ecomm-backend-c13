@@ -45,7 +45,7 @@ Product.init(
             }
         },
         // tag_id: {
-        //     type: DataTypes.INTEGER,
+        //     type: DataTypes.ARRAY(DataTypes.INTEGER),
         //     references: {
         //         model: 'ProductTag',
         //         key: 'tag_id'
