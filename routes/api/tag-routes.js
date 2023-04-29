@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Tag, Product } = require('../../models');
+const { Tag, Product, ProductTag } = require('../../models');
 const { update } = require('../../models/Product');
 
 // The `/api/tags` endpoint
@@ -10,7 +10,6 @@ router.get('/', async (req, res) => {
   try {
     const tagData = await Tag.findAll({
       include: [{ model: Product }],
-      attributes: { exclude: ['product_id'] }
     });
 
     res.status(200).json(tagData);
@@ -24,20 +23,16 @@ router.get('/', async (req, res) => {
 
 // find a single tag by its `id`
 // be sure to include its associated Product data
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const tagData = Tag.findByPk(req.params.id, {
-      include: [{ model: Product }],
-      attributes: { exclude: ['product_id'] },
-      returning: true
-    });
+    const tagId = await Tag.findByPk(req.params.id, { include: Product });
 
-    if(!tagData) {
-      res.status(400).json({ message: 'Tag id not found'});
+    if(!tagId) {
+      res.status(400).json({ message: 'Could not find tag id.'});
     }
 
-    res.status(200).json(tagData);
-    console.log('Fetched single tag: ' + tagData);
+    res.status(200).json(tagId);
+    console.log('Fetched single tag: ' + tagId);
 
   } catch (err) {
       res.status(500).json(err);
@@ -48,7 +43,9 @@ router.get('/:id', (req, res) => {
 // create a new tag
 router.post('/', async (req, res) => {
   try {
+    const { tag_name } = req.body;
     const newTag = await Tag.create(req.body, {
+      returning: true,
     });
 
     res.status(200).json(newTag);
@@ -63,12 +60,25 @@ router.post('/', async (req, res) => {
 // update a tag's name by its `id` value
 router.put('/:id', async (req, res) => {
   try {
-    const [ rowsAffected, updatedTag ] = await Tag.update(req.body, {//note to self: sequelize update method returns array with 2 items: # of affected rows and array of updated instances, so we need to destructure here
-        where: { id: req.params.id } },
+    const tagId = req.params.id;
+    const tag = await Tag.findByPk(tagId);
+
+    if(!tag) {
+      res.status(500).json({ message: 'Tag not found.'});
+    }
+
+    // const [ rowsAffected, updatedTag ] = await Tag.update(req.body, {//note to self: sequelize update method returns array with 2 items: # of affected rows and array of updated instances, so we need to destructure here
+    //     where: { id: req.params.id } },
+    // );
+    await Tag.update(
+      { tag_name: req.body.tag_name },
+      { where: { id: tagId} },
     );
 
-    res.status(200).json(updatedTag[0]);
-    console.log('Updated tag: ' + updatedTag[0]);
+    const updatedTag = await Tag.findByPk(tagId);
+
+    res.status(200).json(updatedTag);
+    console.log('Updated tag: ' + updatedTag);
 
   } catch (err) {
       res.status(400).json(err);
@@ -79,18 +89,21 @@ router.put('/:id', async (req, res) => {
 // delete on tag by its `id` value
 router.delete('/:id', async (req, res) => {
   try {
-    const tagData = await Tag.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
+    const tagId = req.params.id;
+    const tag = await Tag.findByPk(tagId);
 
-    if(!tagData) {
-      res.status(404).json({ message: 'Tag id not found'});
+    if(!tag) {
+      res.status(500).json({ message: 'Tag not found.'});
     }
 
-    res.status(200).json(tagData);
-    console.log('Deleted tag: ' + tagData);
+    await Tag.destroy({
+      where: { id: tagId },
+      include: ProductTag,
+      returning: true
+    });
+
+    res.status(200).json({ message: 'Deleted tag.'});
+    console.log('Deleted tag');
 
   } catch (err) {
       res.status(500).json(err);
