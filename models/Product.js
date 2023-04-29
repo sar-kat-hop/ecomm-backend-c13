@@ -36,7 +36,7 @@ Product.init(
                 key: 'id',
                 onDelete: 'CASCADE'
             }
-        }
+        },
     },
     {
         sequelize,

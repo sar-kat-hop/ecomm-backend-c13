@@ -9,8 +9,8 @@ router.get('/', async (req, res) => {
   try {
     const allProducts = await Product.findAll({
       returning: true,
-      include: [{ model: Category, ProductTag }],
-      attributes: { exclude: ['category_id'] }
+      include: [{ model: Category, Tag, ProductTag }],
+      // attributes: { exclude: ['category_id'] }
     });
 
     res.status(200).json(allProducts);
@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
     console.log('Fetched single product: ' + productId.product_name);
 
   } catch (err) {
-    res.status(500).json('Error getting single product by id: ', err);
+    res.status(500).json('Error fetching single product by id: ', err);
   }
 });
 
@@ -50,22 +50,31 @@ router.post('/', async (req, res) => {
       tagIds: [1, 2, 3, 4]
     }  */  
     try {
-      const { product_name, price, stock } = req.body;
+      const { product_name, price, stock, category_id, tagIds } = req.body;
       const newProduct = await Product.create(req.body, { 
         returning: true,
+        include: Category
       });
-      // await newProduct.addTags(req.body.tagIds);
-      
+
+      if (tagIds && tagIds.length) {
+        const productTags = await Tag.findAll({
+          where: { tag_id: {[Op.in]: tagIds} }
+        });
+
+        await newProduct.addTags(productTags);
+      }
+
       res.status(200).json(newProduct);
       console.log('Created new product: ', newProduct.product_name);
-      
+
     } catch (err) {
       res.status(400).json({ message: 'Could not create new product' });
+      console.log('Error creating new product: ', err);
     }
 });
 
 // starter code alternative for creating new product, saving for testing
-// router.post('/products', async (req, res) => {
+// router.post('/', async (req, res) => {
 //   await Product.create(req.body)
 //   .then((product) => {
 //     // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -101,7 +110,8 @@ router.put('/:id', async (req, res) => {
     // findAll productTags
     const productTags = await ProductTag.findAll({ 
       where: { product_id: productId }, 
-      attributes: ['tag_id'],} );
+      // attributes: ['tag_id'],
+    } );
     
     //map productTags
     const productTagIds = await productTags.map((productTag) => productTag.tag_id );
