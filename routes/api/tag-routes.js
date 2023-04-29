@@ -3,7 +3,7 @@ const { Tag, Product } = require('../../models');
 
 // The `/api/tags` endpoint
 
-router.get('/', (req, res) => {
+router.get('/tags', (req, res) => {
   // find all tags
   // be sure to include its associated Product data
   try {
@@ -15,11 +15,11 @@ router.get('/', (req, res) => {
 
   } catch (err) {
       res.status(500).json(err);
-      console.log(err);
+      console.log('Error with GET route fetching all tags: ', err);
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/tags/:id', (req, res) => {
   // find a single tag by its `id`
   // be sure to include its associated Product data
   try {
@@ -40,7 +40,7 @@ router.get('/:id', (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
+router.post('/tags', (req, res) => {
   // create a new tag
   try {
     const newTag = Tag.create(
@@ -55,46 +55,26 @@ router.post('/', (req, res) => {
 
   } catch (err) {
       res.status(400).json(err)
-      console.log(err);
+      console.log('Error with POST route to create new tag: ', err);
   }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/tags/:id', async (req, res) => {
   // update a tag's name by its `id` value
   try {
-    Tag.update(
-      {
-        tag_name: req.body.tag_name,
-      },
-      {
-        where: {
-          id: req.params.id,
-        },
-      }
-    )
-      .then((updatedTag) => {
-        res.json(updatedTag);
-      })
+    const { tag_name } = req.body;
+    const [ rowsAffected, updatedTag ] = await Tag.update(req.body, //note to self: sequelize update method returns array with 2 items: # of affected rows and array of updated instances, so we need to destructure here
+      { where: { id: req.params.id }},
+    );
+      // .then((updatedTag) => {
+      //   res.json(updatedTag);
+      // })
+      res.status(200).json(updatedTag[0]);
   } catch (err) {
     res.status(400).json(err);
-    console.log(err);
+    console.log('Error with PUT route updating tag by id: ', err);
   }
 });
-
-  // try {
-    // const tagData = Tag.update(req.body, {
-    //   where: {
-    //     id: req.params.id,
-    //   },
-    // });
-
-//     res.status(200).json(tagData);
-
-//   } catch (err) {
-//       res.status(400).json(err);
-//       console.log(err);
-//   };
-// });
 
 router.delete('/:id', (req, res) => {
   // delete on tag by its `id` value
